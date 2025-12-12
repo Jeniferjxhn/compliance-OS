@@ -59,6 +59,8 @@ export class OpenAIService {
         internalDataOverview: {
           customerProfile: customerData.personalInfo,
           riskLevel: customerData.riskLevel,
+          lastAssessmentDate: customerData.lastAssessmentDate,
+          nextReviewDate: customerData.nextReviewDate,
           transactionsSummary: {
             total: customerData.transactions.length,
             flagged: customerData.transactions.filter(t => t.flagged).length,

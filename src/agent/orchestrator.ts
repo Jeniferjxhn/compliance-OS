@@ -240,6 +240,12 @@ export class Orchestrator {
     }
     sections.push(`**Account Status:** Active`);
     sections.push(`**Current Risk Classification:** ${report.internalDataOverview.riskLevel}`);
+    if (report.internalDataOverview.lastAssessmentDate) {
+      sections.push(`**Last Assessment:** ${report.internalDataOverview.lastAssessmentDate}`);
+    }
+    if (report.internalDataOverview.nextReviewDate) {
+      sections.push(`**Next Review Scheduled:** ${report.internalDataOverview.nextReviewDate}`);
+    }
     sections.push('');
     sections.push('---');
     sections.push('');

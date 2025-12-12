@@ -283,9 +283,41 @@ export class ComplianceOSService {
       const investigations = await this.extractInvestigations();
       logger.debug('Investigations extracted', { count: investigations.length });
 
+      // Extract assessment dates from Risk Profile section
+      let lastAssessmentDate = '';
+      let nextReviewDate = '';
+      
+      try {
+        // Get the Risk Profile section text which contains the dates
+        const riskProfileSection = await this.page.locator('text="Risk Profile"').first();
+        if (await riskProfileSection.isVisible().catch(() => false)) {
+          const container = await riskProfileSection.locator('../..').first();
+          const riskText = await container.textContent() || '';
+          
+          // Extract dates using regex
+          // Pattern: "Last assessment conducted on Jan 15, 2024"
+          const lastAssessmentMatch = riskText.match(/Last assessment conducted on ([A-Za-z]+ \d{1,2}, \d{4})/i);
+          if (lastAssessmentMatch) {
+            lastAssessmentDate = lastAssessmentMatch[1];
+          }
+          
+          // Pattern: "Next review scheduled for Apr 15, 2024"
+          const nextReviewMatch = riskText.match(/Next review scheduled for ([A-Za-z]+ \d{1,2}, \d{4})/i);
+          if (nextReviewMatch) {
+            nextReviewDate = nextReviewMatch[1];
+          }
+          
+          logger.debug('Assessment dates extracted', { lastAssessmentDate, nextReviewDate });
+        }
+      } catch (error) {
+        logger.debug('Failed to extract assessment dates', { error });
+      }
+
       const customerData: CustomerData = {
         personalInfo,
         riskLevel,
+        lastAssessmentDate,
+        nextReviewDate,
         transactions,
         investigations,
       };

@@ -5,6 +5,8 @@
 export interface CustomerData {
   personalInfo: PersonalInfo;
   riskLevel: string;
+  lastAssessmentDate?: string;
+  nextReviewDate?: string;
   transactions: Transaction[];
   investigations: Investigation[];
 }
@@ -53,6 +55,8 @@ export interface ComplianceReport {
 export interface InternalDataSection {
   customerProfile: PersonalInfo;
   riskLevel: string;
+  lastAssessmentDate?: string;
+  nextReviewDate?: string;
   transactionsSummary: {
     total: number;
     flagged: number;
