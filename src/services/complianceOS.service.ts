@@ -553,27 +553,28 @@ export class ComplianceOSService {
         });
         
         // Parse investigations using regex since everything is concatenated
-        // Pattern: Title text, then INV-YYYY-NNN, then date, then status
-        // Example: "Unusual transaction volumeINV-2023-0012023-11-15closed"
+        // Pattern: Title, INV-ID, Date, Status, Description
+        // Example: "Unusual transaction volumeINV-2023-0012023-11-15closedCustomer purchased a vehicle. Verified with dealership."
         const investigationPattern = /(INV-\d{4}-\d{3})(\d{4}-\d{2}-\d{2})(closed|open)/gi;
         
         let match;
         while ((match = investigationPattern.exec(containerText)) !== null) {
           const [fullMatch, invId, date, status] = match;
-          
-          // Find the title by looking backwards from the match position
           const matchIndex = match.index;
-          const textBeforeMatch = containerText.substring(0, matchIndex);
           
-          // Extract the last meaningful phrase before the INV ID
-          // Split by common separators and take the last chunk
+          // Extract title (text before INV-ID)
+          const textBeforeMatch = containerText.substring(0, matchIndex);
           const titleCandidates = textBeforeMatch.split(/(?=[A-Z][a-z])|alerts|checks/);
           const title = titleCandidates[titleCandidates.length - 1]?.trim() || 'Investigation';
-          
-          // Clean up the title - remove common noise words
           const cleanTitle = title
             .replace(/^(Past Investigations|History of compliance|checks and|alerts)/gi, '')
             .trim() || 'Compliance Investigation';
+          
+          // Extract description (text after status)
+          const textAfterMatch = containerText.substring(matchIndex + fullMatch.length);
+          // Get text up to next investigation or end (max 200 chars)
+          const descriptionMatch = textAfterMatch.match(/^([^I]{1,200}?)(?=INV-|$)/);
+          const description = descriptionMatch?.[1]?.trim() || '';
           
           const investigation: Investigation = {
             id: invId,
@@ -581,10 +582,17 @@ export class ComplianceOSService {
             status: status.charAt(0).toUpperCase() + status.slice(1).toLowerCase(),
             investigator: 'Compliance Officer',
             summary: cleanTitle,
+            outcome: description || undefined,
           };
           
           investigations.push(investigation);
-          logger.info('Investigation parsed', { id: invId, title: cleanTitle, status, date });
+          logger.info('Investigation parsed', { 
+            id: invId, 
+            title: cleanTitle, 
+            status, 
+            date,
+            description: description.substring(0, 50) 
+          });
         }
       }
 

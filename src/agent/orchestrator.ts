@@ -313,10 +313,13 @@ export class Orchestrator {
     
     if (report.internalDataOverview.investigationHistory.total > 0 && report.internalDataOverview.investigationHistory.recent.length > 0) {
       report.internalDataOverview.investigationHistory.recent.forEach((inv) => {
-        sections.push(`**${inv.date}:**`);
-        sections.push(`- Investigator: ${inv.investigator}`);
-        sections.push(`- Finding: ${inv.summary}`);
-        sections.push(`- Resolution: ${inv.outcome || inv.status}`);
+        sections.push(`**${inv.summary}** | ${inv.id} | ${inv.status}`);
+        sections.push('');
+        sections.push(`**Date:** ${inv.date}`);
+        sections.push('');
+        if (inv.outcome) {
+          sections.push(inv.outcome);
+        }
         sections.push('');
       });
     } else {
