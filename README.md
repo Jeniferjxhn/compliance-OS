@@ -76,6 +76,10 @@ User Input (Natural Language)
 # Setup
 
 ```bash
+# Clone the repository
+git clone https://github.com/Jeniferjxhn/compliance-OS.git
+cd compliance-OS
+
 # Install dependencies
 npm install
 
@@ -144,15 +148,15 @@ npm run dev prompt "Pull Will Lawrence's file from ComplianceOS"
 npm run dev prompt "Investigate John Smith and analyze his transactions"
 
 # Imperative commands
-npm run dev prompt "Get Sarah Chen's data"
-npm run dev prompt "Look up Michael Rodriguez"
+npm run dev prompt "Get Sarah Jenkins's data"
+npm run dev prompt "Look up Michael Chen"
 
 # Simple names (case insensitive)
 npm run dev prompt "will lawrence"
-npm run dev prompt "JANE DOE"
+npm run dev prompt "SARAH JENKINS"
 
 # Casual requests
-npm run dev prompt "check out robert kim please"
+npm run dev prompt "check out will lawrence please"
 ```
 
 The name extraction algorithm automatically:
@@ -172,9 +176,9 @@ The name extraction algorithm automatically:
 Examples:
 
 ```bash
-npm run dev investigate "Will Lawrence" --verbose
-npm run dev investigate "John Smith" --output ./urgent-cases
-npm run dev investigate "Jane Doe" --headless false
+npm run dev investigate "Will Lawrence" --verbose (turns on extra debug logs, showing more detailed progress messages in the terminal.)
+npm run dev investigate "John Smith" --output ./urgent-cases (→ lets you choose where the generated report will be saved.)
+npm run dev investigate "Jane Doe" --headless false (→ tells Playwright not to hide the browser window, so you can watch the automation happen.)
 ```
 
 # Expected Outputs
