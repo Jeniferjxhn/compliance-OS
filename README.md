@@ -331,62 +331,6 @@ npm test
 npm run test:integration
 ```
 
-### Code Quality
-
-The codebase follows strict TypeScript standards:
-- Strict mode enabled
-- No `any` types
-- Modular, single-responsibility functions
-- Comprehensive error handling
-- Proper async/await patterns
-- Clean separation of concerns
-
-# Cost Optimization
-
-The system is designed to minimize OpenAI API costs:
-
-1. **Uses gpt-4o-mini**: Significantly cheaper than GPT-4 while maintaining quality
-2. **Skips AI calls for not-found customers**: No wasted API calls
-3. **Efficient prompts**: Structured prompts minimize token usage
-4. **Single-pass generation**: Generates complete report in one API call
-
-Estimated cost per investigation:
-- Customer found: ~$0.02-0.05 (depending on data volume)
-- Customer not found: $0.00 (no OpenAI call)
-
-# Production Deployment
-
-# Recommendations
-
-1. **Environment Variables**: Use secure secrets management (AWS Secrets Manager, etc.)
-2. **Logging**: Configure log aggregation (CloudWatch, Splunk)
-3. **Monitoring**: Set up alerts for failures
-4. **Rate Limiting**: Implement queuing for high-volume scenarios
-5. **Credentials**: Regularly rotate ComplianceOS and OpenAI credentials
-6. **Backups**: Automated backup of generated reports
-7. **Audit Trail**: Log all investigations for compliance
-
-# Performance
-- Browser automation: 30-60 seconds
-- AI research: 15-30 seconds
-- Total time: 45-90 seconds per investigation
-
-For high-volume scenarios:
-- Implement connection pooling
-- Use parallel processing
-- Cache frequently accessed data
-- Optimize Playwright selectors
-
-## Security Considerations
-
-- Never commit `.env` file or API keys
-- Use environment variables for all sensitive data
-- Implement rate limiting to prevent abuse
-- Sanitize all user inputs
-- Use HTTPS for all network communications
-- Implement audit trails for all investigations
-- Follow principle of least privilege
-
 ## Limitations
 
 - Sequential processing (one investigation at a time)
@@ -394,18 +338,6 @@ For high-volume scenarios:
 - Dependent on ComplianceOS page structure
 - English language only
 - No batch processing (yet)
-
-## Future Enhancements
-
-Potential improvements:
-- Batch processing for multiple customers
-- Web UI dashboard
-- Webhook integration for automated triggers
-- Custom data source plugins
-- ML-based risk scoring
-- PDF export format
-- Scheduled periodic reviews
-- Integration with case management systems
 
 ## Support
 
