@@ -222,11 +222,10 @@ The generated report includes:
 - Risk Assessment (score, factors, flags)
 - Recommended Actions
 
-### Failure Case (Customer Not Found)
+# Failure Case (Customer Not Found)
 
 ```
 --- Greenlite Compliance Agent ---
-==================================
 
 Target Customer: Nonexistent Customer
 Output Directory: ./reports
@@ -343,7 +342,7 @@ The codebase follows strict TypeScript standards:
 - Proper async/await patterns
 - Clean separation of concerns
 
-## Cost Optimization
+# Cost Optimization
 
 The system is designed to minimize OpenAI API costs:
 
@@ -356,9 +355,9 @@ Estimated cost per investigation:
 - Customer found: ~$0.02-0.05 (depending on data volume)
 - Customer not found: $0.00 (no OpenAI call)
 
-## Production Deployment
+# Production Deployment
 
-### Recommendations
+# Recommendations
 
 1. **Environment Variables**: Use secure secrets management (AWS Secrets Manager, etc.)
 2. **Logging**: Configure log aggregation (CloudWatch, Splunk)
@@ -368,8 +367,7 @@ Estimated cost per investigation:
 6. **Backups**: Automated backup of generated reports
 7. **Audit Trail**: Log all investigations for compliance
 
-### Performance
-
+# Performance
 - Browser automation: 30-60 seconds
 - AI research: 15-30 seconds
 - Total time: 45-90 seconds per investigation
@@ -430,4 +428,3 @@ Built with:
 - OpenAI GPT-4o-mini for cost-effective AI analysis
 - TypeScript for type safety and maintainability
 - Winston for structured logging
-
