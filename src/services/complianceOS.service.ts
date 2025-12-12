@@ -264,6 +264,9 @@ export class ComplianceOSService {
     try {
       logger.info('Extracting customer data...');
 
+      // Take screenshot of customer profile page for debugging
+      await this.captureScreenshot('customer-profile');
+
       // Extract personal information
       const personalInfo = await this.extractPersonalInfo();
       logger.debug('Personal info extracted', { name: personalInfo.name });
@@ -429,38 +432,59 @@ export class ComplianceOSService {
     }
 
     try {
-      // Look for transaction table or list
-      const transactionRows = await this.page.locator(
-        'table:has-text("Transaction") tbody tr, .transaction-list > *, [data-testid*="transaction"]'
-      ).all();
-
+      // Wait for page to fully load
+      await this.page.waitForTimeout(2000);
+      
       const transactions: Transaction[] = [];
-
-      for (const row of transactionRows) {
-        const cells = await row.locator('td, div').allTextContents();
+      
+      // Look for the "Recent Transactions" heading
+      const transactionHeading = await this.page.locator('text="Recent Transactions"').first();
+      const headingExists = await transactionHeading.isVisible().catch(() => false);
+      
+      logger.info('Transaction section check', { headingExists });
+      
+      if (headingExists) {
+        // Get the parent container (the whole card/section)
+        const container = await transactionHeading.locator('../..').first();
+        const containerText = await container.textContent() || '';
         
-        if (cells.length >= 4) {
+        logger.info('Transaction container text', { 
+          length: containerText.length,
+          preview: containerText.substring(0, 150)
+        });
+        
+        // Parse transactions using regex since everything is concatenated
+        // Pattern: YYYY-MM-DD followed by merchant name, category, and amount
+        // Example: "2024-01-15Best BuyElectronics$4500.00"
+        // Use a more specific pattern: date, then non-digit text, then amount (ending at next digit or end)
+        const transactionPattern = /(\d{4}-\d{2}-\d{2})([^$\d]+?)(\$[\d,]+\.\d{2})(?=\d{4}|$)/g;
+        
+        let match;
+        while ((match = transactionPattern.exec(containerText)) !== null) {
+          const [_, date, merchantAndCategory, amount] = match;
+          
+          // Try to split merchant and category
+          // Usually the last word before the amount is the category
+          const parts = merchantAndCategory.trim().split(/(?=[A-Z])/); // Split on capital letters
+          const merchant = parts.slice(0, -1).join('').trim() || merchantAndCategory.trim();
+          const category = parts[parts.length - 1]?.trim() || 'Transfer';
+          
           const transaction: Transaction = {
-            id: cells[0]?.trim() || `TXN-${transactions.length + 1}`,
-            date: cells[1]?.trim() || '',
-            amount: cells[2]?.trim() || '',
-            counterparty: cells[3]?.trim() || '',
-            type: cells[4]?.trim() || 'Transfer',
-            status: cells[5]?.trim() || 'Completed',
+            id: `TXN-${transactions.length + 1}`,
+            date,
+            amount,
+            counterparty: merchant || 'Unknown',
+            type: category,
+            status: 'Completed',
+            flagged: merchant.toLowerCase().includes('crypto') || parseFloat(amount.replace(/[$,]/g, '')) > 10000,
           };
-
-          // Check if transaction is flagged
-          const rowHtml = await row.innerHTML();
-          transaction.flagged = rowHtml.includes('flag') || rowHtml.includes('alert');
-
-          if (transaction.flagged && cells.length > 6) {
-            transaction.flagReason = cells[6]?.trim();
-          }
-
+          
           transactions.push(transaction);
+          logger.info('Transaction parsed', { date, merchant, category, amount });
         }
       }
 
+      logger.info('Transactions extracted', { count: transactions.length });
       return transactions;
     } catch (error) {
       logger.warn('Failed to extract transactions', { error });
@@ -477,29 +501,47 @@ export class ComplianceOSService {
     }
 
     try {
-      const investigationRows = await this.page.locator(
-        'table:has-text("Investigation") tbody tr, .investigation-list > *, [data-testid*="investigation"]'
-      ).all();
-
       const investigations: Investigation[] = [];
-
-      for (const row of investigationRows) {
-        const cells = await row.locator('td, div').allTextContents();
+      
+      // Look for the "Past Investigations" heading
+      const investigationHeading = await this.page.locator('text="Past Investigations"').first();
+      const headingExists = await investigationHeading.isVisible().catch(() => false);
+      
+      logger.info('Investigation section check', { headingExists });
+      
+      if (headingExists) {
+        // Get the parent container (the whole card/section)
+        const container = await investigationHeading.locator('../..').first();
+        const containerText = await container.textContent() || '';
         
-        if (cells.length >= 4) {
+        logger.info('Investigation container text', { 
+          length: containerText.length,
+          preview: containerText.substring(0, 150)
+        });
+        
+        // Parse investigations using regex since everything is concatenated
+        // Pattern: Title text, then INV-YYYY-NNN, then date, then status
+        // Example: "Unusual transaction volumeINV-2023-0012023-11-15closed"
+        const investigationPattern = /([A-Za-z\s]+?)(INV-\d{4}-\d{3})(\d{4}-\d{2}-\d{2})(closed|open)/gi;
+        
+        let match;
+        while ((match = investigationPattern.exec(containerText)) !== null) {
+          const [_, title, invId, date, status] = match;
+          
           const investigation: Investigation = {
-            id: cells[0]?.trim() || `INV-${investigations.length + 1}`,
-            date: cells[1]?.trim() || '',
-            status: cells[2]?.trim() || '',
-            investigator: cells[3]?.trim() || '',
-            summary: cells[4]?.trim() || '',
-            outcome: cells[5]?.trim() || undefined,
+            id: invId,
+            date,
+            status: status.charAt(0).toUpperCase() + status.slice(1).toLowerCase(),
+            investigator: 'Compliance Officer',
+            summary: title.trim(),
           };
-
+          
           investigations.push(investigation);
+          logger.info('Investigation parsed', { id: invId, title: title.trim(), status, date });
         }
       }
 
+      logger.info('Investigations extracted', { count: investigations.length });
       return investigations;
     } catch (error) {
       logger.warn('Failed to extract investigations', { error });
