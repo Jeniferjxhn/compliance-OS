@@ -16,6 +16,7 @@ export interface PersonalInfo {
   customerId?: string;
   email?: string;
   phone?: string;
+  profession?: string;
 }
 
 export interface Transaction {

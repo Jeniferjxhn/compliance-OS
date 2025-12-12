@@ -337,6 +337,7 @@ export class ComplianceOSService {
     personalInfo.email = await this.extractFieldValue(['Email', 'E-mail']);
     personalInfo.phone = await this.extractFieldValue(['Phone', 'Telephone', 'Mobile']);
     personalInfo.customerId = await this.extractFieldValue(['Customer ID', 'ID', 'Account Number']);
+    personalInfo.profession = await this.extractFieldValue(['Profession', 'Occupation', 'Job Title']);
 
     return personalInfo;
   }

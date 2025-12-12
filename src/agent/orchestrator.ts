@@ -235,6 +235,9 @@ export class Orchestrator {
     if (report.internalDataOverview.customerProfile.phone) {
       sections.push(`**Phone:** ${report.internalDataOverview.customerProfile.phone}`);
     }
+    if (report.internalDataOverview.customerProfile.profession) {
+      sections.push(`**Profession:** ${report.internalDataOverview.customerProfile.profession}`);
+    }
     sections.push(`**Account Status:** Active`);
     sections.push(`**Current Risk Classification:** ${report.internalDataOverview.riskLevel}`);
     sections.push('');
