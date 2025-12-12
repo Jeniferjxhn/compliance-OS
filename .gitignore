@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.env
+reports/
+screenshots/
+*.log
+.DS_Store
+playwright/.cache/
+test-results/
+playwright-report/
+debug-page.html
+
