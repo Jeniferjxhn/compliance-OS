@@ -2,7 +2,7 @@
 
 A TypeScript CLI application that automates compliance investigations by scraping ComplianceOS and generating AI-powered research reports.
 
-## Overview
+# Overview
 
 The Greenlite Compliance Agent streamlines the compliance investigation workflow through a two-phase automated process:
 
@@ -11,7 +11,7 @@ The Greenlite Compliance Agent streamlines the compliance investigation workflow
 
 The system intelligently handles edge cases, including customers not found in the database, without wasting API calls.
 
-## Architecture
+# Architecture
 
 The application follows a modular architecture with clear separation of concerns:
 
@@ -32,7 +32,7 @@ src/
 └── index.ts                   # CLI entry point
 ```
 
-### Workflow
+# Workflow
 
 ```
 User Input (Natural Language)
@@ -65,15 +65,15 @@ User Input (Natural Language)
     Save Markdown Report
 ```
 
-## Installation
+# Installation
 
-### Prerequisites
+# Prerequisites
 
 - Node.js 18.x or higher
 - npm or yarn
 - OpenAI API key
 
-### Setup
+# Setup
 
 ```bash
 # Install dependencies
@@ -108,9 +108,9 @@ OUTPUT_DIR=./reports
 
 Get an OpenAI API key at: https://platform.openai.com/api-keys
 
-## Usage
+# Usage
 
-### Test Connections
+# Test Connections
 
 Verify system connectivity before running investigations:
 
@@ -128,13 +128,13 @@ OpenAI API: [OK] Connected
 [OK] All systems operational
 ```
 
-### Standard Investigation
+# Standard Investigation
 
 ```bash
 npm run dev investigate "Customer Name"
 ```
 
-### Natural Language Interface
+# Natural Language Interface
 
 The system accepts flexible natural language prompts:
 
@@ -161,7 +161,7 @@ The name extraction algorithm automatically:
 - Normalizes capitalization
 - Handles possessives ('s)
 
-### Command Options
+# Command Options
 
 ```bash
 --output ./path       # Custom output directory
@@ -177,13 +177,12 @@ npm run dev investigate "John Smith" --output ./urgent-cases
 npm run dev investigate "Jane Doe" --headless false
 ```
 
-## Expected Outputs
+# Expected Outputs
 
-### Success Case (Customer Found)
+# Success Case (Customer Found)
 
 ```
---- Greenlite Compliance Agent ---
-==================================
+- Greenlite Compliance Agent -
 
 Target Customer: Will Lawrence
 Output Directory: ./reports
@@ -427,4 +426,4 @@ Built with:
 - Playwright for reliable browser automation
 - OpenAI GPT-4o-mini for cost-effective AI analysis
 - TypeScript for type safety and maintainability
-- Winston for structured logging
+- Winston for structured logging 
