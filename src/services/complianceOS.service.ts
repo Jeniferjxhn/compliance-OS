@@ -522,22 +522,36 @@ export class ComplianceOSService {
         // Parse investigations using regex since everything is concatenated
         // Pattern: Title text, then INV-YYYY-NNN, then date, then status
         // Example: "Unusual transaction volumeINV-2023-0012023-11-15closed"
-        const investigationPattern = /([A-Za-z\s]+?)(INV-\d{4}-\d{3})(\d{4}-\d{2}-\d{2})(closed|open)/gi;
+        const investigationPattern = /(INV-\d{4}-\d{3})(\d{4}-\d{2}-\d{2})(closed|open)/gi;
         
         let match;
         while ((match = investigationPattern.exec(containerText)) !== null) {
-          const [_, title, invId, date, status] = match;
+          const [fullMatch, invId, date, status] = match;
+          
+          // Find the title by looking backwards from the match position
+          const matchIndex = match.index;
+          const textBeforeMatch = containerText.substring(0, matchIndex);
+          
+          // Extract the last meaningful phrase before the INV ID
+          // Split by common separators and take the last chunk
+          const titleCandidates = textBeforeMatch.split(/(?=[A-Z][a-z])|alerts|checks/);
+          const title = titleCandidates[titleCandidates.length - 1]?.trim() || 'Investigation';
+          
+          // Clean up the title - remove common noise words
+          const cleanTitle = title
+            .replace(/^(Past Investigations|History of compliance|checks and|alerts)/gi, '')
+            .trim() || 'Compliance Investigation';
           
           const investigation: Investigation = {
             id: invId,
             date,
             status: status.charAt(0).toUpperCase() + status.slice(1).toLowerCase(),
             investigator: 'Compliance Officer',
-            summary: title.trim(),
+            summary: cleanTitle,
           };
           
           investigations.push(investigation);
-          logger.info('Investigation parsed', { id: invId, title: title.trim(), status, date });
+          logger.info('Investigation parsed', { id: invId, title: cleanTitle, status, date });
         }
       }
 

@@ -210,7 +210,7 @@ export class Orchestrator {
     sections.push(`**Date of Investigation:** ${timestamp.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`);
     sections.push(`**Investigator:** Greenlite AI Agent`);
     sections.push(`**Case ID:** ${caseId}`);
-    sections.push(`**Risk Level:** ${report.riskAssessment.overallRiskScore.toUpperCase()}`);
+    sections.push(`**Risk Level:** ${report.internalDataOverview.riskLevel.toUpperCase()}`);
     sections.push('');
     sections.push('---');
     sections.push('');
