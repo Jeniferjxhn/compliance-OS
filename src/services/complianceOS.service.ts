@@ -399,7 +399,25 @@ export class ComplianceOSService {
       'Risk Level', 'Risk', 'Risk Score', 'Risk Rating'
     ]);
 
-    return riskLevel || 'Unknown';
+    // Parse the risk level from text that might contain extra content
+    // e.g., "Current Levelmedium RiskLast assessment..." -> "Medium"
+    if (riskLevel) {
+      const lowercaseText = riskLevel.toLowerCase();
+      
+      // Check for risk level keywords
+      if (lowercaseText.includes('high') || lowercaseText.includes('critical')) {
+        return 'High';
+      } else if (lowercaseText.includes('medium') || lowercaseText.includes('moderate')) {
+        return 'Medium';
+      } else if (lowercaseText.includes('low') || lowercaseText.includes('minimal')) {
+        return 'Low';
+      }
+      
+      // Return cleaned version if no keyword found
+      return riskLevel.trim();
+    }
+
+    return 'Unknown';
   }
 
   /**
