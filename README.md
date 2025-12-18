@@ -362,4 +362,5 @@ Built with:
 - Playwright for reliable browser automation
 - OpenAI GPT-4o-mini for cost-effective AI analysis
 - TypeScript for type safety and maintainability
+- Cursor for debugging
 - Winston for structured logging 
